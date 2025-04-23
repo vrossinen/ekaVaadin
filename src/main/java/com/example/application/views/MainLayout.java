@@ -1,85 +1,76 @@
 package com.example.application.views;
 
+import com.example.application.security.AuthenticatedUser;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Header;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.SvgIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.Layout;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import com.vaadin.flow.server.menu.MenuConfiguration;
-import com.vaadin.flow.server.menu.MenuEntry;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import java.util.List;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-/**
- * The main view is a top-level placeholder for other views.
- */
 @Layout
 @AnonymousAllowed
+@PageTitle("Event Management")
 public class MainLayout extends AppLayout {
+    private final AuthenticatedUser authenticatedUser;
 
-    private H1 viewTitle;
+    public MainLayout(AuthenticatedUser authenticatedUser) {
+        this.authenticatedUser = authenticatedUser;
 
-    public MainLayout() {
-        setPrimarySection(Section.DRAWER);
-        addDrawerContent();
-        addHeaderContent();
-    }
-
-    private void addHeaderContent() {
         DrawerToggle toggle = new DrawerToggle();
-        toggle.setAriaLabel("Menu toggle");
+        H1 logo = new H1("Event Management");
+        logo.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE, "custom-component");
 
-        viewTitle = new H1();
-        viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
+        Header header = new Header(toggle, logo);
+        header.addClassNames(LumoUtility.Background.PRIMARY, LumoUtility.Padding.MEDIUM);
 
-        addToNavbar(true, toggle, viewTitle);
-    }
-
-    private void addDrawerContent() {
-        Span appName = new Span("Eka vaadin sovellus");
-        appName.addClassNames(LumoUtility.FontWeight.SEMIBOLD, LumoUtility.FontSize.LARGE);
-        Header header = new Header(appName);
-
-        Scroller scroller = new Scroller(createNavigation());
-
-        addToDrawer(header, scroller, createFooter());
-    }
-
-    private SideNav createNavigation() {
         SideNav nav = new SideNav();
+        nav.addItem(
+                new SideNavItem("Events", EventView.class),
+                new SideNavItem("Locations", LocationView.class),
+                new SideNavItem("Organizers", OrganizerView.class),
+                new SideNavItem("Participants", ParticipantView.class),
+                new SideNavItem("Admin", AdminView.class)
+        );
 
-        List<MenuEntry> menuEntries = MenuConfiguration.getMenuEntries();
-        menuEntries.forEach(entry -> {
-            if (entry.icon() != null) {
-                nav.addItem(new SideNavItem(entry.title(), entry.path(), new SvgIcon(entry.icon())));
-            } else {
-                nav.addItem(new SideNavItem(entry.title(), entry.path()));
-            }
-        });
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAuthenticated = authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal());
 
-        return nav;
-    }
+        Scroller scroller = new Scroller(nav);
 
-    private Footer createFooter() {
-        Footer layout = new Footer();
+        Footer footer = new Footer();
+        H1 copyright = new H1("© 2025 Event Management");
+        copyright.addClassNames(LumoUtility.FontSize.SMALL);
 
-        return layout;
-    }
+        HorizontalLayout footerLayout = new HorizontalLayout(copyright);
+        footerLayout.setWidthFull();
+        footerLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+        footerLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
-    @Override
-    protected void afterNavigation() {
-        super.afterNavigation();
-        viewTitle.setText(getCurrentPageTitle());
-    }
+        if (isAuthenticated) {
+            Button logoutButton = new Button("Logout", e -> {
+                authenticatedUser.logout(); // Perform logout
+                getUI().ifPresent(ui -> ui.getPage().setLocation("/login?logout")); // Use setLocation instead of navigate
+            });
+            logoutButton.addClassName("logout-button");
+            footerLayout.add(logoutButton);
+        }
 
-    private String getCurrentPageTitle() {
-        return MenuConfiguration.getPageHeader(getContent()).orElse("");
+        footer.add(footerLayout);
+        footer.addClassNames(LumoUtility.TextAlignment.CENTER, LumoUtility.Padding.MEDIUM);
+
+        addToDrawer(scroller, footer);
+        addToNavbar(header);
     }
 }

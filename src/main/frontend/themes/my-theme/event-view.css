@@ -1,0 +1,11 @@
+/* Style for the EventView layout */
+.event-view {
+    background-color: var(--lumo-base-color);
+    padding: var(--lumo-space-m);
+}
+
+/* Style for filters */
+.event-view text-field {
+    margin-right: var(--lumo-space-s);
+    margin-bottom: var(--lumo-space-s);
+}

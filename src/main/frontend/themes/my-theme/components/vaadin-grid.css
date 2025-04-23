@@ -1,0 +1,30 @@
+/* Base styles for the grid */
+:host {
+    border: 1px solid var(--lumo-contrast-20pct);
+    border-radius: var(--lumo-border-radius-m);
+}
+
+/* Style the grid headers */
+:host([class~="event-grid"])::part(header-cell) {
+    background-color: var(--lumo-contrast-10pct);
+    font-weight: bold;
+    border-bottom: 1px solid var(--lumo-contrast-30pct);
+    padding: var(--lumo-space-s);
+}
+
+/* Style the grid rows */
+:host([class~="event-grid"])::part(row) {
+    background-color: var(--lumo-base-color);
+}
+
+/* Style the grid cells */
+:host([class~="event-grid"])::part(cell) {
+    padding: var(--lumo-space-s);
+    font-size: var(--lumo-font-size-s);
+    border-bottom: 1px solid var(--lumo-contrast-10pct);
+}
+
+/* Hover effect on rows */
+:host([class~="event-grid"])::part(row):hover {
+    background-color: var(--lumo-contrast-5pct);
+}

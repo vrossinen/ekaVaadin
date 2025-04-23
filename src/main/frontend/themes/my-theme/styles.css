@@ -1,0 +1,83 @@
+/* Import component-specific styles */
+@import url('./main-layout.css');
+@import url('./event-view.css');
+@import url('./components/vaadin-button.css');
+@import url('./components/vaadin-text-field.css');
+@import url('./components/vaadin-grid.css');
+@import url('./components/vaadin-dialog.css');
+
+/* Global Lumo variables */
+html {
+    --lumo-font-size: 1rem;
+    --lumo-font-size-xxxl: 3rem;
+    --lumo-font-size-xxl: 2.25rem;
+    --lumo-font-size-xl: 1.75rem;
+    --lumo-font-size-l: 1.375rem;
+    --lumo-font-size-m: 1.125rem;
+    --lumo-font-size-s: 1rem;
+    --lumo-font-size-xs: 0.875rem;
+    --lumo-font-size-xxs: 0.8125rem;
+    --lumo-line-height-m: 1.8;
+    --lumo-line-height-s: 1.5;
+    --lumo-line-height-xs: 1.3;
+    --lumo-border-radius-s: calc(var(--lumo-size-m) / 6);
+    --lumo-border-radius-m: calc(var(--lumo-size-m) / 2);
+    --lumo-border-radius-l: var(--lumo-size-m);
+    --lumo-size-xl: 4rem;
+    --lumo-size-l: 3rem;
+    --lumo-size-m: 2.5rem;
+    --lumo-size-s: 2rem;
+    --lumo-size-xs: 1.75rem;
+    --lumo-space-xl: 2.5rem;
+    --lumo-space-l: 1.75rem;
+    --lumo-space-m: 1.125rem;
+    --lumo-space-s: 0.75rem;
+    --lumo-space-xs: 0.375rem;
+}
+
+/* Global button styles */
+button {
+    border-radius: var(--lumo-border-radius-m);
+    transition: background-color 0.2s;
+}
+
+/* Style for the Add Event button */
+button[lumo-utility-margin-small] {
+    background-color: var(--lumo-primary-color);
+    color: var(--lumo-primary-contrast-color);
+}
+
+/* Hover effect for the Add Event button */
+button[lumo-utility-margin-small]:hover {
+    background-color: var(--lumo-primary-color-50pct);
+}
+
+/* Style for Edit and Delete buttons in the grid */
+.event-grid button {
+    padding: var(--lumo-space-xs) var(--lumo-space-s);
+    font-size: var(--lumo-font-size-xs);
+}
+
+/* Style for Edit button */
+.event-grid button:first-child {
+    background-color: var(--lumo-success-color);
+    color: var(--lumo-success-contrast-color);
+}
+
+/* Style for Delete button */
+.event-grid button:last-child {
+    background-color: var(--lumo-error-color);
+    color: white;
+}
+
+/* Style for Save button in dialog */
+.event-dialog button:first-child {
+    background-color: var(--lumo-success-color);
+    color: var(--lumo-success-contrast-color);
+}
+
+/* Style for Cancel button in dialog */
+.event-dialog button:last-child {
+    background-color: var(--lumo-contrast-50pct);
+    color: var(--lumo-base-color);
+}
