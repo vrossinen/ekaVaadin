@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import com.example.application.views.LoginView;
@@ -31,6 +32,11 @@ public class SecurityConfig extends VaadinWebSecurity {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new CustomAccessDeniedHandler();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.userDetailsService(authenticatedUser)
@@ -40,6 +46,9 @@ public class SecurityConfig extends VaadinWebSecurity {
                         .requestMatchers("/locations").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/organizers").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/participants").hasAnyRole("USER", "ADMIN")
+                )
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(accessDeniedHandler()) // Rekisteröi CustomAccessDeniedHandler
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
