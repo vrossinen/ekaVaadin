@@ -4,12 +4,10 @@ import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import com.example.application.views.LoginView;
@@ -33,14 +31,9 @@ public class SecurityConfig extends VaadinWebSecurity {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public AccessDeniedHandler accessDeniedHandler() {
-        return new CustomAccessDeniedHandler();
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.userDetailsService(authenticatedUser) // Set the custom UserDetailsService
+        http.userDetailsService(authenticatedUser)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/error", "/").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
@@ -48,15 +41,12 @@ public class SecurityConfig extends VaadinWebSecurity {
                         .requestMatchers("/organizers").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/participants").hasAnyRole("USER", "ADMIN")
                 )
-                .exceptionHandling(exception -> exception
-                        .accessDeniedHandler(accessDeniedHandler())
-                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessHandler(new LogoutSuccessHandler() {
                             @Override
                             public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-                                response.sendRedirect("/login?logout"); // Redirect all users to /login?logout
+                                response.sendRedirect("/login?logout");
                             }
                         })
                         .permitAll()
@@ -65,16 +55,4 @@ public class SecurityConfig extends VaadinWebSecurity {
         super.configure(http);
         setLoginView(http, LoginView.class, "/");
     }
-
-   /* @Override
-    public void configure(WebSecurity web) throws Exception {
-        // Allow access to static resources without authentication
-        web.ignoring().antMatchers(
-                "/VAADIN/**",
-                "/sw.js",
-                "/manifest.json",
-                "/icons/**",
-                "/images/**"
-        );
-    }*/
 }

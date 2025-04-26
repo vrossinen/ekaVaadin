@@ -6,10 +6,11 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 
 @Route(value = "admin", layout = MainLayout.class)
-@RolesAllowed("ADMIN") //OOnly admin allowed
+@RolesAllowed("ADMIN")
 public class AdminView extends VerticalLayout {
+
     public AdminView() {
-        add(new H1("Admin Dashboard"));
-        add(new H1("This page is only accessible to admins."));
+        add(new H1(getTranslation("admin.view.title"))); //Lokalisaatio suomi
+        add(new H1(getTranslation("admin.view.message"))); //Lokalisaatio suomi
     }
 }
